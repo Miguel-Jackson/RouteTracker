@@ -1,0 +1,4030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postcode Lookup</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url('https://i.postimg.cc/tbfqrFTd/gls-small.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-size: 18px; /* Increase the general text size */
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.8); /* Optional: Add a semi-transparent background to the content */
+            padding: 20px;
+            border-radius: 10px;
+        }
+        header, footer {
+            width: 100%;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 0;
+        }
+        input[type="text"] {
+            font-size: 18px; /* Increase the input box text size */
+            padding: 10px; /* Increase the input box size */
+            width: 80%; /* Make the input box wider */
+        }
+        button {
+            font-size: 18px; /* Increase the button text size */
+            padding: 10px 20px; /* Increase the button size */
+        }
+    </style>
+</head>
+<body>
+    <header>Simple GLS Route Finder</header>
+    <div class="container">
+        <p>
+            <label for="postcodeInput">Enter Postcode:</label>
+            <input type="text" id="postcodeInput" placeholder="E.g., 9207">
+        </p>
+        <button id="lookupButton">Search</button>
+        <p id="townResult"></p>
+        <p id="routeResult"></p>
+    </div>
+    <footer>GLS | Parcels to People&nbsp;</footer>
+    <script>
+        const postcodeInput = document.getElementById("postcodeInput");
+        const lookupButton = document.getElementById("lookupButton");
+        const townResult = document.getElementById("townResult");
+        const routeResult = document.getElementById("routeResult");
+
+        const entries = [
+            {
+                "Postcode": 8401,
+                "Town": "Gorredijk",
+                "Route": 808
+            },
+            {
+                "Postcode": 8403,
+                "Town": "Jonkerslaan",
+                "Route": 808
+            },
+			        {
+                "Postcode": 8404,
+                "Town": "Langezwaag",
+                "Route": 808
+        },
+        {
+                "Postcode": 8405,
+                "Town": "Luxwoude",
+                "Route": 808
+        },
+        {
+                "Postcode": 8406,
+                "Town": "Tijnje",
+                "Route": 808
+        },
+        {
+                "Postcode": 8407,
+                "Town": "Terwispel",
+                "Route": 808
+        },
+        {
+                "Postcode": 8408,
+                "Town": "Lippenhuizen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8409,
+                "Town": "Hemrik",
+                "Route": 808
+        },
+        {
+                "Postcode": 8411,
+                "Town": "Jubbega",
+                "Route": 808
+        },
+        {
+                "Postcode": 8412,
+                "Town": "Hoornsterzwaag",
+                "Route": 808
+        },
+        {
+                "Postcode": 8413,
+                "Town": "Oudehorne",
+                "Route": 808
+        },
+        {
+                "Postcode": 8414,
+                "Town": "Nieuwehorne",
+                "Route": 808
+        },
+        {
+                "Postcode": 8415,
+                "Town": "Bontebok",
+                "Route": 808
+        },
+        {
+                "Postcode": 8421,
+                "Town": "Oldeberkoop",
+                "Route": 808
+        },
+        {
+                "Postcode": 8422,
+                "Town": "Nijeberkoop",
+                "Route": 808
+        },
+        {
+                "Postcode": 8423,
+                "Town": "Makkinga",
+                "Route": 808
+        },
+        {
+                "Postcode": 8424,
+                "Town": "Elsloo Fr",
+                "Route": 808
+        },
+        {
+                "Postcode": 8425,
+                "Town": "Langedijke",
+                "Route": 808
+        },
+        {
+                "Postcode": 8426,
+                "Town": "Appelscha",
+                "Route": 808
+        },
+        {
+                "Postcode": 8427,
+                "Town": "Ravenswoud",
+                "Route": 808
+        },
+        {
+                "Postcode": 8428,
+                "Town": "Focteloo",
+                "Route": 808
+        },
+        {
+                "Postcode": 8431,
+                "Town": "Oosterwolde Fr",
+                "Route": 808
+        },
+        {
+                "Postcode": 8432,
+                "Town": "Haule",
+                "Route": 808
+        },
+        {
+                "Postcode": 8433,
+                "Town": "Haulerwijk",
+                "Route": 808
+        },
+        {
+                "Postcode": 8434,
+                "Town": "Waskemeer",
+                "Route": 808
+        },
+        {
+                "Postcode": 8435,
+                "Town": "Donkerbroek",
+                "Route": 808
+        },
+        {
+                "Postcode": 8437,
+                "Town": "Zorgvlied",
+                "Route": 808
+        },
+        {
+                "Postcode": 8438,
+                "Town": "Wateren",
+                "Route": 808
+        },
+        {
+                "Postcode": 8439,
+                "Town": "Oude Willem",
+                "Route": 808
+        },
+        {
+                "Postcode": 8441,
+                "Town": "Heerenveen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8442,
+                "Town": "Heerenveen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8443,
+                "Town": "Heerenveen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8444,
+                "Town": "Heerenveen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8445,
+                "Town": "Heerenveen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8446,
+                "Town": "Heerenveen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8447,
+                "Town": "Heerenveen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8448,
+                "Town": "Heerenveen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8449,
+                "Town": "Terband",
+                "Route": 808
+        },
+        {
+                "Postcode": 8451,
+                "Town": "Oudeschoot",
+                "Route": 808
+        },
+        {
+                "Postcode": 8452,
+                "Town": "ieuweschoot",
+                "Route": 808
+        },
+        {
+                "Postcode": 8453,
+                "Town": "Oranjewould",
+                "Route": 808
+        },
+        {
+                "Postcode": 8454,
+                "Town": "Mildam",
+                "Route": 808
+        },
+        {
+                "Postcode": 8455,
+                "Town": "Katlijk",
+                "Route": 808
+        },
+        {
+                "Postcode": 8456,
+                "Town": "De Knipe",
+                "Route": 808
+        },
+        {
+                "Postcode": 8457,
+                "Town": "Gersloot",
+                "Route": 808
+        },
+        {
+                "Postcode": 8458,
+                "Town": "Tjalleberd",
+                "Route": 808
+        },
+        {
+                "Postcode": 8459,
+                "Town": "Luinjeberd",
+                "Route": 808
+        },
+        {
+                "Postcode": 8461,
+                "Town": "Rottum Fr",
+                "Route": 808
+        },
+        {
+                "Postcode": 8462,
+                "Town": "Rotstergaast",
+                "Route": 808
+        },
+        {
+                "Postcode": 8463,
+                "Town": "Rotsterhaule",
+                "Route": 808
+        },
+        {
+                "Postcode": 8464,
+                "Town": "Sintjohannesga",
+                "Route": 808
+        },
+        {
+                "Postcode": 8465,
+                "Town": "Oudehaske",
+                "Route": 808
+        },
+        {
+                "Postcode": 8466,
+                "Town": "Nijehaske",
+                "Route": 808
+        },
+        {
+                "Postcode": 8467,
+                "Town": "Vegelinsoord",
+                "Route": 808
+        },
+        {
+                "Postcode": 8468,
+                "Town": "Haskerdijken",
+                "Route": 808
+        },
+        {
+                "Postcode": 8469,
+                "Town": "Nieuwebrug",
+                "Route": 808
+        },
+        {
+                "Postcode": 8471,
+                "Town": "Wolvega",
+                "Route": 808
+        },
+        {
+                "Postcode": 8472,
+                "Town": "Wolvega",
+                "Route": 808
+        },
+        {
+                "Postcode": 8474,
+                "Town": "Oldeholtpade",
+                "Route": 808
+        },
+        {
+                "Postcode": 8475,
+                "Town": "Nijeholtpade",
+                "Route": 808
+        },
+        {
+                "Postcode": 8476,
+                "Town": "Ter Izard",
+                "Route": 808
+        },
+        {
+                "Postcode": 8477,
+                "Town": "Oldeholtwolde",
+                "Route": 808
+        },
+        {
+                "Postcode": 8478,
+                "Town": "Sonnega",
+                "Route": 808
+        },
+        {
+                "Postcode": 8479,
+                "Town": "Oldetrijne",
+                "Route": 808
+        },
+        {
+                "Postcode": 8481,
+                "Town": "Nijetrijne",
+                "Route": 808
+        },
+        {
+                "Postcode": 8482,
+                "Town": "Spanga",
+                "Route": 808
+        },
+        {
+                "Postcode": 8483,
+                "Town": "Scherpenzeel Fr",
+                "Route": 808
+        },
+        {
+                "Postcode": 8484,
+                "Town": "Langelille",
+                "Route": 808
+        },
+        {
+                "Postcode": 8485,
+                "Town": "Munnekeburen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8486,
+                "Town": "Oldelamer",
+                "Route": 808
+        },
+        {
+                "Postcode": 8487,
+                "Town": "Nijelamer",
+                "Route": 808
+        },
+        {
+                "Postcode": 8488,
+                "Town": "Nijeholtwolde",
+                "Route": 808
+        },
+        {
+                "Postcode": 8489,
+                "Town": "Slijkenburg",
+                "Route": 808
+        },
+        {
+                "Postcode": 8491,
+                "Town": "Akkrum",
+                "Route": 808
+        },
+        {
+                "Postcode": 8493,
+                "Town": "Terherne",
+                "Route": 808
+        },
+        {
+                "Postcode": 8494,
+                "Town": "Nes Gem Heerenveen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8495,
+                "Town": "Aldeboarn",
+                "Route": 808
+        },
+        {
+                "Postcode": 8497,
+                "Town": "Goengahuizen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8501,
+                "Town": "Joure",
+                "Route": 809
+        },
+        {
+                "Postcode": 8502,
+                "Town": "Joure",
+                "Route": 809
+        },
+        {
+                "Postcode": 8503,
+                "Town": "Joure",
+                "Route": 809
+        },
+        {
+                "Postcode": 8505,
+                "Town": "Snikzwaag",
+                "Route": 809
+        },
+        {
+                "Postcode": 8506,
+                "Town": "Haskerhorne",
+                "Route": 809
+        },
+        {
+                "Postcode": 8507,
+                "Town": "Rohel",
+                "Route": 808
+        },
+        {
+                "Postcode": 8508,
+                "Town": "Delfstrahuizen",
+                "Route": 808
+        },
+        {
+                "Postcode": 8511,
+                "Town": "Gongarijp",
+                "Route": 809
+        },
+        {
+                "Postcode": 8512,
+                "Town": "Broek Fr",
+                "Route": 809
+        },
+        {
+                "Postcode": 8513,
+                "Town": "Ouwsterhaule",
+                "Route": 808
+        },
+        {
+                "Postcode": 8514,
+                "Town": "Ouwster-Nijega",
+                "Route": 808
+        },
+        {
+                "Postcode": 8515,
+                "Town": "Oldeouwer",
+                "Route": 808
+        },
+        {
+                "Postcode": 8516,
+                "Town": "Donlaga",
+                "Route": 809
+        },
+        {
+                "Postcode": 8517,
+                "Town": "Schasterburg",
+                "Route": 809
+        },
+        {
+                "Postcode": 8521,
+                "Town": "Sint Nicolaasga",
+                "Route": 809
+        },
+        {
+                "Postcode": 8522,
+                "Town": "Tjerkgaast",
+                "Route": 809
+        },
+        {
+                "Postcode": 8523,
+                "Town": "Idskenhuizen",
+                "Route": 809
+        },
+        {
+                "Postcode": 8525,
+                "Town": "Langweer",
+                "Route": 809
+        },
+        {
+                "Postcode": 8526,
+                "Town": "Boornzwaag",
+                "Route": 809
+        },
+        {
+                "Postcode": 8527,
+                "Town": "Legemeer",
+                "Route": 809
+        },
+        {
+                "Postcode": 8528,
+                "Town": "Dijken",
+                "Route": 809
+        },
+        {
+                "Postcode": 8529,
+                "Town": "Koufurderrige",
+                "Route": 809
+        },
+        {
+                "Postcode": 8531,
+                "Town": "Lemmer",
+                "Route": 808
+        },
+        {
+                "Postcode": 8532,
+                "Town": "Lemmer",
+                "Route": 808
+        },
+        {
+                "Postcode": 8534,
+                "Town": "Eesterga",
+                "Route": 808
+        },
+        {
+                "Postcode": 8535,
+                "Town": "Follega",
+                "Route": 808
+        },
+        {
+                "Postcode": 8536,
+                "Town": "Ooosterzee",
+                "Route": 808
+        },
+        {
+                "Postcode": 8537,
+                "Town": "Echten Fr",
+                "Route": 808
+        },
+        {
+                "Postcode": 8538,
+                "Town": "Bantega",
+                "Route": 808
+        },
+        {
+                "Postcode": 8539,
+                "Town": "Echtenerburg",
+                "Route": 808
+        },
+        {
+                "Postcode": 8541,
+                "Town": "Akmarijp",
+                "Route": 809
+        },
+        {
+                "Postcode": 8542,
+                "Town": "Terkapie",
+                "Route": 809
+        },
+        {
+                "Postcode": 8551,
+                "Town": "Woudsend",
+                "Route": 809
+        },
+        {
+                "Postcode": 8552,
+                "Town": "Smallebrugge",
+                "Route": 809
+        },
+        {
+                "Postcode": 8553,
+                "Town": "Indijk",
+                "Route": 809
+        },
+        {
+                "Postcode": 8554,
+                "Town": "Ypelcosga",
+                "Route": 809
+        },
+        {
+                "Postcode": 8556,
+                "Town": "Sloten Fr",
+                "Route": 809
+        },
+        {
+                "Postcode": 8561,
+                "Town": "Balk",
+                "Route": 809
+        },
+        {
+                "Postcode": 8563,
+                "Town": "Wijckel",
+                "Route": 809
+        },
+        {
+                "Postcode": 8564,
+                "Town": "Ruigahuizen",
+                "Route": 809
+        },
+        {
+                "Postcode": 8565,
+                "Town": "Sondel",
+                "Route": 809
+        },
+        {
+                "Postcode": 8566,
+                "Town": "Nijemirdum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8567,
+                "Town": "Oudemirdum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8571,
+                "Town": "Harich",
+                "Route": 809
+        },
+        {
+                "Postcode": 8572,
+                "Town": "Rijs",
+                "Route": 809
+        },
+        {
+                "Postcode": 8573,
+                "Town": "Mirns",
+                "Route": 809
+        },
+        {
+                "Postcode": 8574,
+                "Town": "Bakhuizen",
+                "Route": 809
+        },
+        {
+                "Postcode": 8581,
+                "Town": "Elahuizen",
+                "Route": 809
+        },
+        {
+                "Postcode": 8582,
+                "Town": "Oudega De Fryske Marren",
+                "Route": 809
+        },
+        {
+                "Postcode": 8583,
+                "Town": "JKoldewolde",
+                "Route": 809
+        },
+        {
+                "Postcode": 8584,
+                "Town": "Hemelum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8601,
+                "Town": "Sneek",
+                "Route": 809
+        },
+        {
+                "Postcode": 8606,
+                "Town": "Sneek",
+                "Route": 809
+        },
+        {
+                "Postcode": 8611,
+                "Town": "Gaastmeer",
+
+                "Route": 809
+        },
+        {
+                "Postcode": 8612,
+                "Town": "Idzega",
+                "Route": 809
+        },
+        {
+                "Postcode": 8613,
+                "Town": "Sandfrieden",
+                "Route": 809
+        },
+        {
+                "Postcode": 8614,
+                "Town": "Oudega Sudwest-Frysian",
+                "Route": 809
+        },
+        {
+                "Postcode": 8615,
+                "Town": "Blauwhuis",
+                "Route": 809
+        },
+        {
+                "Postcode": 8616,
+                "Town": "Westhem",
+                "Route": 809
+        },
+        {
+                "Postcode": 8617,
+                "Town": "Abbega",
+                "Route": 809
+        },
+        {
+                "Postcode": 8618,
+                "Town": "Oosthem",
+                "Route": 809
+        },
+        {
+                "Postcode": 8621,
+                "Town": "Heeg",
+                "Route": 809
+        },
+        {
+                "Postcode": 8622,
+                "Town": "Hommerts",
+                "Route": 809
+        },
+        {
+                "Postcode": 8623,
+                "Town": "Jutrijp",
+                "Route": 809
+        },
+        {
+                "Postcode": 8624,
+                "Town": "Uitwellingerga",
+                "Route": 809
+        },
+        {
+                "Postcode": 8625,
+                "Town": "Oppenhuizen",
+                "Route": 809
+        },
+        {
+                "Postcode": 8626,
+                "Town": "Offingawier",
+                "Route": 809
+        },
+        {
+                "Postcode": 8627,
+                "Town": "Gauw",
+                "Route": 809
+        },
+        {
+                "Postcode": 8628,
+                "Town": "Goengahuizen",
+                "Route": 809
+        },
+        {
+                "Postcode": 8629,
+                "Town": "Scharnegoutum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8631,
+                "Town": "Loenga",
+                "Route": 809
+        },
+        {
+                "Postcode": 8632,
+                "Town": "Tirns",
+                "Route": 809
+        },
+        {
+                "Postcode": 8633,
+                "Town": "Ysbrechtum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8635,
+                "Town": "Boazum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8636,
+                "Town": "Britswert",
+                "Route": 809
+        },
+        {
+                "Postcode": 8637,
+                "Town": "Wiuwert",
+                "Route": 809
+        },
+        {
+                "Postcode": 8641,
+                "Town": "Rien",
+                "Route": 809
+        },
+        {
+                "Postcode": 8642,
+                "Town": "Lystewierrum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8644,
+                "Town": "Dearsum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8647,
+                "Town": "Sibrandabourren",
+                "Route": 809
+        },
+        {
+                "Postcode": 8651,
+                "Town": "Ijlst",
+                "Route": 809
+        },
+        {
+                "Postcode": 8658,
+                "Town": "Greonterp",
+                "Route": 809
+        },
+        {
+                "Postcode": 8701,
+                "Town": "Bolsward",
+                "Route": 809
+        },
+        {
+                "Postcode": 8702,
+                "Town": "Bolsward",
+                "Route": 809
+        },
+        {
+                "Postcode": 8711,
+                "Town": "Workum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8713,
+                "Town": "Hindeloopen",
+                "Route": 809
+        },
+        {
+                "Postcode": 8715,
+                "Town": "Stavoren",
+                "Route": 809
+        },
+        {
+                "Postcode": 8721,
+                "Town": "Warns",
+                "Route": 809
+        },
+        {
+                "Postcode": 8722,
+                "Town": "Molkwerum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8723,
+                "Town": "Koudum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8724,
+                "Town": "It Heidenskip",
+                "Route": 809
+        },
+        {
+                "Postcode": 8731,
+                "Town": "Wommels",
+                "Route": 809
+        },
+        {
+                "Postcode": 8732,
+                "Town": "Kubaard",
+                "Route": 809
+        },
+        {
+                "Postcode": 8733,
+                "Town": "Iens",
+                "Route": 809
+        },
+        {
+                "Postcode": 8734,
+                "Town": "Easterein",
+                "Route": 809
+        },
+        {
+                "Postcode": 8735,
+                "Town": "Itens",
+                "Route": 809
+        },
+        {
+                "Postcode": 8736,
+                "Town": "Reahus",
+                "Route": 809
+        },
+        {
+                "Postcode": 8737,
+                "Town": "Hidaard",
+                "Route": 809
+        },
+        {
+                "Postcode": 8741,
+                "Town": "Hartwerd",
+                "Route": 809
+        },
+        {
+                "Postcode": 8742,
+                "Town": "Burgwerd",
+                "Route": 809
+        },
+        {
+                "Postcode": 8743,
+                "Town": "Hichtum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8744,
+                "Town": "Schettens",
+                "Route": 809
+        },
+        {
+                "Postcode": 8745,
+                "Town": "Longerhouw",
+                "Route": 809
+        },
+        {
+                "Postcode": 8746,
+                "Town": "Schraard",
+                "Route": 809
+        },
+        {
+                "Postcode": 8747,
+                "Town": "Wons",
+                "Route": 809
+        },
+        {
+                "Postcode": 8748,
+                "Town": "Witmarsum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8749,
+                "Town": "Pingjum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8751,
+                "Town": "Zurich",
+                "Route": 809
+        },
+        {
+                "Postcode": 8752,
+                "Town": "Kornwerderzand",
+                "Route": 809
+        },
+        {
+                "Postcode": 8753,
+                "Town": "Cornwerd",
+                "Route": 809
+        },
+        {
+                "Postcode": 8754,
+                "Town": "Makkum Fr",
+                "Route": 809
+        },
+        {
+                "Postcode": 8755,
+                "Town": "Idsegahuizum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8756,
+                "Town": "Piaam",
+                "Route": 809
+        },
+        {
+                "Postcode": 8757,
+                "Town": "Gaast",
+                "Route": 809
+        },
+        {
+                "Postcode": 8758,
+                "Town": "Allingawier",
+                "Route": 809
+        },
+        {
+                "Postcode": 8759,
+                "Town": "Exmorra",
+                "Route": 809
+        },
+        {
+                "Postcode": 8761,
+                "Town": "Ferwoude",
+                "Route": 809
+        },
+        {
+                "Postcode": 8762,
+                "Town": "Hieslum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8763,
+                "Town": "Parrega",
+                "Route": 809
+        },
+        {
+                "Postcode": 8764,
+                "Town": "Dedgum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8765,
+                "Town": "Tjerkwerd",
+                "Route": 809
+        },
+        {
+                "Postcode": 8766,
+                "Town": "Breezanddijk",
+                "Route": 809
+        },
+        {
+                "Postcode": 8771,
+                "Town": "Nijland",
+                "Route": 809
+        },
+        {
+                "Postcode": 8772,
+                "Town": "Tjalhuizum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8773,
+                "Town": "Folsgare",
+                "Route": 809
+        },
+        {
+                "Postcode": 8774,
+                "Town": "Wolsum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8775,
+                "Town": "Nijhuizum",
+                "Route": 809
+        },
+        {
+                "Postcode": 8801,
+                "Town": "Franeker",
+                "Route": 801
+        },
+        {
+                "Postcode": 8802,
+                "Town": "Franeker",
+                "Route": 801
+        },
+        {
+                "Postcode": 8804,
+                "Town": "Tzum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8805,
+                "Town": "Hitzum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8806,
+                "Town": "Achlum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8807,
+                "Town": "Herbaijum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8808,
+                "Town": "Dongjum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8809,
+                "Town": "Boer",
+                "Route": 801
+        },
+        {
+                "Postcode": 8811,
+                "Town": "Rieds",
+                "Route": 801
+        },
+        {
+                "Postcode": 8812,
+                "Town": "Peins",
+                "Route": 801
+        },
+        {
+                "Postcode": 8813,
+                "Town": "Schalsum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8814,
+                "Town": "Zweins",
+                "Route": 801
+        },
+        {
+                "Postcode": 8816,
+                "Town": "Skingen",
+                "Route": 801
+        },
+        {
+                "Postcode": 8821,
+                "Town": "Kimswerd",
+                "Route": 801
+        },
+        {
+                "Postcode": 8822,
+                "Town": "Arum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8823,
+                "Town": "Lollum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8831,
+                "Town": "Winsum Fr",
+                "Route": 801
+        },
+        {
+                "Postcode": 8832,
+                "Town": "Huns",
+                "Route": 801
+        },
+        {
+                "Postcode": 8834,
+                "Town": "Baard",
+                "Route": 801
+        },
+        {
+                "Postcode": 8835,
+                "Town": "Easterlittens",
+                "Route": 801
+        },
+        {
+                "Postcode": 8841,
+                "Town": "Baaium",
+                "Route": 801
+        },
+        {
+                "Postcode": 8842,
+                "Town": "Wjelsryp",
+                "Route": 801
+        },
+        {
+                "Postcode": 8843,
+                "Town": "Spannum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8844,
+                "Town": "Hinnaard",
+                "Route": 801
+        },
+        {
+                "Postcode": 8845,
+                "Town": "Waaksens",
+                "Route": 809
+        },
+        {
+                "Postcode": 8851,
+                "Town": "Tzummarum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8852,
+                "Town": "Firdgum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8853,
+                "Town": "Klooster Lidlum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8854,
+                "Town": "Oosterbierum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8855,
+                "Town": "Sexbierum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8856,
+                "Town": "Pietersbierum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8857,
+                "Town": "Wijnaldum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8861,
+                "Town": "Harlingen",
+                "Route": 801
+        },
+        {
+                "Postcode": 8862,
+                "Town": "Harlingen",
+                "Route": 801
+        },
+        {
+                "Postcode": 8872,
+                "Town": "Midlum",
+                "Route": 801
+        },
+        {
+                "Postcode": 8911,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 8912,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 8913,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 8914,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 8918,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 8921,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 8924,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 8931,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 8932,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 8934,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 8936,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 8937,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 8938,
+                "Town": "Leeuwarden",
+                "Route": 801
+        },
+        {
+                "Postcode": 9001,
+                "Town": "Grou",
+                "Route": 801
+        },
+        {
+                "Postcode": 9003,
+                "Town": "Wartens",
+                "Route": 801
+        },
+        {
+                "Postcode": 9004,
+                "Town": "Warstiens",
+                "Route": 801
+        },
+        {
+                "Postcode": 9005,
+                "Town": "Wergea",
+                "Route": 801
+        },
+        {
+                "Postcode": 9006,
+                "Town": "Eagum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9007,
+                "Town": "Idaerd",
+                "Route": 801
+        },
+        {
+                "Postcode": 9008,
+                "Town": "Reduzum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9009,
+                "Town": "Friens",
+                "Route": 801
+        },
+        {
+                "Postcode": 9011,
+                "Town": "Jirnsum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9012,
+                "Town": "Raerd",
+                "Route": 801
+        },
+        {
+                "Postcode": 9013,
+                "Town": "Poppenwier",
+                "Route": 801
+        },
+        {
+                "Postcode": 9014,
+                "Town": "Tersoal",
+                "Route": 801
+        },
+        {
+                "Postcode": 9021,
+                "Town": "Easterwierrum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9022,
+                "Town": "Mantgum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9023,
+                "Town": "Jorwert",
+                "Route": 801
+        },
+        {
+                "Postcode": 9024,
+                "Town": "Weidum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9025,
+                "Town": "Bears Fr",
+                "Route": 801
+        },
+        {
+                "Postcode": 9026,
+                "Town": "Jellum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9027,
+                "Town": "Hilaard",
+                "Route": 801
+        },
+        {
+                "Postcode": 9031,
+                "Town": "Boksum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9032,
+                "Town": "Blessum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9033,
+                "Town": "Deinum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9034,
+                "Town": "Marsum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9035,
+                "Town": "Dronryp",
+                "Route": 801
+        },
+        {
+                "Postcode": 9036,
+                "Town": "Menaam",
+                "Route": 801
+        },
+        {
+                "Postcode": 9037,
+                "Town": "Slappeterp",
+                "Route": 801
+        },
+        {
+                "Postcode": 9038,
+                "Town": "Ingelum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9041,
+                "Town": "Beritsum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9043,
+                "Town": "Wier",
+                "Route": 801
+        },
+        {
+                "Postcode": 9044,
+                "Town": "Bitgum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9045,
+                "Town": "Bitgummole",
+                "Route": 801
+        },
+        {
+                "Postcode": 9047,
+                "Town": "Minnertsga",
+                "Route": 801
+        },
+        {
+                "Postcode": 9051,
+                "Town": "Stiens",
+                "Route": 801
+        },
+        {
+                "Postcode": 9053,
+                "Town": "Feinsum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9054,
+                "Town": "Hijum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9055,
+                "Town": "Britsum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9056,
+                "Town": "Koarnjum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9057,
+                "Town": "Jelsum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9061,
+                "Town": "Gytsjerk",
+                "Route": 802
+        },
+        {
+                "Postcode": 9062,
+                "Town": "Oentsjerk",
+                "Route": 802
+        },
+        {
+                "Postcode": 9063,
+                "Town": "Munein",
+                "Route": 802
+        },
+        {
+                "Postcode": 9064,
+                "Town": "Aldtsjerk",
+                "Route": 802
+        },
+        {
+                "Postcode": 9067,
+                "Town": "Readtsjerk",
+                "Route": 802
+        },
+        {
+                "Postcode": 9071,
+                "Town": "Alde Leie",
+                "Route": 801
+        },
+        {
+                "Postcode": 9072,
+                "Town": "Nij Altoenae",
+                "Route": 801
+        },
+        {
+                "Postcode": 9073,
+                "Town": "Marrum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9074,
+                "Town": "Hallum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9075,
+                "Town": "Westhoek",
+                "Route": 801
+        },
+        {
+                "Postcode": 9076,
+                "Town": "St.-Annaparochie",
+                "Route": 801
+        },
+        {
+                "Postcode": 9077,
+                "Town": "Vrouwenparochie",
+                "Route": 801
+        },
+        {
+                "Postcode": 9078,
+                "Town": "Oudebildtzijl",
+                "Route": 801
+        },
+        {
+                "Postcode": 9079,
+                "Town": "St.-Jacobparochie",
+                "Route": 801
+        },
+        {
+                "Postcode": 9081,
+                "Town": "Lekkum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9082,
+                "Town": "Miedum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9083,
+                "Town": "Snakkerburen",
+                "Route": 801
+        },
+        {
+                "Postcode": 9084,
+                "Town": "Goutum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9086,
+                "Town": "Hempens",
+                "Route": 801
+        },
+        {
+                "Postcode": 9087,
+                "Town": "Swichum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9088,
+                "Town": "Wirdum Fr",
+                "Route": 801
+        },
+        {
+                "Postcode": 9089,
+                "Town": "Wytgaard",
+                "Route": 801
+        },
+        {
+                "Postcode": 9091,
+                "Town": "Wyns",
+                "Route": 801
+        },
+        {
+                "Postcode": 9101,
+                "Town": "Dokkum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9102,
+                "Town": "Dokkum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9103,
+                "Town": "Dokkum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9104,
+                "Town": "Damwald",
+                "Route": 802
+        },
+        {
+                "Postcode": 9105,
+                "Town": "Rinsumageast",
+                "Route": 802
+        },
+        {
+                "Postcode": 9106,
+                "Town": "Sibrandahus",
+                "Route": 802
+        },
+        {
+                "Postcode": 9107,
+                "Town": "Jannum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9108,
+                "Town": "Broeksterwald",
+                "Route": 802
+        },
+        {
+                "Postcode": 9109,
+                "Town": "De Falom",
+                "Route": 802
+        },
+        {
+                "Postcode": 9111,
+                "Town": "Burdaard",
+                "Route": 802
+        },
+        {
+                "Postcode": 9112,
+                "Town": "Burdaard",
+                "Route": 802
+        },
+        {
+                "Postcode": 9113,
+                "Town": "Walterswald",
+                "Route": 802
+        },
+        {
+                "Postcode": 9114,
+                "Town": "Driezum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9121,
+                "Town": "Aalsum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9122,
+                "Town": "Wetsens",
+                "Route": 802
+        },
+        {
+                "Postcode": 9123,
+                "Town": "Mitselwier",
+                "Route": 802
+        },
+        {
+                "Postcode": 9124,
+                "Town": "Jouswier",
+                "Route": 802
+        },
+        {
+                "Postcode": 9125,
+                "Town": "Eastrum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9131,
+                "Town": "Ie",
+                "Route": 802
+        },
+        {
+                "Postcode": 9132,
+                "Town": "Ingwierrum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9133,
+                "Town": "Eanjum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9134,
+                "Town": "Ljussens",
+                "Route": 802
+        },
+        {
+                "Postcode": 9135,
+                "Town": "Moarre",
+                "Route": 802
+        },
+        {
+                "Postcode": 9136,
+                "Town": "Paezens",
+                "Route": 802
+        },
+        {
+                "Postcode": 9137,
+                "Town": "Easternijtsjerk",
+                "Route": 802
+        },
+        {
+                "Postcode": 9138,
+                "Town": "Nijewer",
+                "Route": 802
+        },
+        {
+                "Postcode": 9141,
+                "Town": "Wierum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9142,
+                "Town": "Moddergat",
+                "Route": 802
+        },
+        {
+                "Postcode": 9143,
+                "Town": "Nes Noardeasr-Frysian",
+                "Route": 802
+        },
+        {
+                "Postcode": 9144,
+                "Town": "Hantumhuzen",
+                "Route": 802
+        },
+        {
+                "Postcode": 9145,
+                "Town": "Ternaard",
+                "Route": 802
+        },
+        {
+                "Postcode": 9146,
+                "Town": "Hantumerutbuorren",
+                "Route": 802
+        },
+        {
+                "Postcode": 9147,
+                "Town": "Hantum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9148,
+                "Town": "Hiaure",
+                "Route": 802
+        },
+        {
+                "Postcode": 9151,
+                "Town": "Holwert",
+                "Route": 802
+        },
+        {
+                "Postcode": 9152,
+                "Town": "Waaxens",
+                "Route": 802
+        },
+        {
+                "Postcode": 9153,
+                "Town": "Brantgum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9154,
+                "Town": "Foudgum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9155,
+                "Town": "Raard",
+                "Route": 802
+        },
+        {
+                "Postcode": 9156,
+                "Town": "Boarnwert",
+                "Route": 802
+        },
+        {
+                "Postcode": 9171,
+                "Town": "Blije",
+                "Route": 801
+        },
+        {
+                "Postcode": 9172,
+                "Town": "Ferwert",
+                "Route": 801
+        },
+        {
+                "Postcode": 9173,
+                "Town": "Hegebeintum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9174,
+                "Town": "Ginnum",
+                "Route": 801
+        },
+        {
+                "Postcode": 9175,
+                "Town": "Reitsum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9176,
+                "Town": "Lichtaard",
+                "Route": 802
+        },
+        {
+                "Postcode": 9177,
+                "Town": "Jislum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9178,
+                "Town": "Wanswert",
+                "Route": 801
+        },
+        {
+                "Postcode": 9201,
+                "Town": "Drachten",
+                "Route": 802
+        },
+        {
+                "Postcode": 9203,
+                "Town": "Drachten",
+                "Route": 802
+        },
+        {
+                "Postcode": 9206,
+                "Town": "Drachten",
+                "Route": 802
+        },
+        {
+                "Postcode": 9207,
+                "Town": "Drachten",
+                "Route": 802
+        },
+        {
+                "Postcode": 9211,
+                "Town": "Kortehemmen",
+                "Route": 802
+        },
+        {
+                "Postcode": 9212,
+                "Town": "Boornbergum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9213,
+                "Town": "De Wilgen",
+                "Route": 802
+        },
+        {
+                "Postcode": 9214,
+                "Town": "Smalle Ee",
+                "Route": 802
+        },
+        {
+                "Postcode": 9215,
+                "Town": "De Veenhoop",
+                "Route": 802
+        },
+        {
+                "Postcode": 9216,
+                "Town": "Oudega Gem Smallingerlnd",
+                "Route": 802
+        },
+        {
+                "Postcode": 9217,
+                "Town": "Nijega",
+                "Route": 802
+        },
+        {
+                "Postcode": 9218,
+                "Town": "Opeinde",
+                "Route": 802
+        },
+        {
+                "Postcode": 9219,
+                "Town": "De Tike",
+                "Route": 802
+        },
+        {
+                "Postcode": 9221,
+                "Town": "Rottevalle",
+                "Route": 802
+        },
+        {
+                "Postcode": 9222,
+                "Town": "Drachtstercompagnie",
+                "Route": 802
+        },
+        {
+                "Postcode": 9223,
+                "Town": "Houtigehage",
+                "Route": 802
+        },
+        {
+                "Postcode": 9231,
+                "Town": "Surhuisiterveen",
+                "Route": 802
+        },
+        {
+                "Postcode": 9233,
+                "Town": "Boelenslaan",
+                "Route": 802
+        },
+        {
+                "Postcode": 9241,
+                "Town": "Wijnjewoude",
+                "Route": 802
+        },
+        {
+                "Postcode": 9243,
+                "Town": "Bakkeveen",
+                "Route": 802
+        },
+        {
+                "Postcode": 9244,
+                "Town": "Beetsterzwaag",
+                "Route": 802
+        },
+        {
+                "Postcode": 9245,
+                "Town": "Nij Beets",
+                "Route": 802
+        },
+        {
+                "Postcode": 9246,
+                "Town": "Olterterp",
+                "Route": 802
+        },
+        {
+                "Postcode": 9247,
+                "Town": "Ureterp",
+                "Route": 802
+        },
+        {
+                "Postcode": 9248,
+                "Town": "Siegerswoude",
+                "Route": 802
+        },
+        {
+                "Postcode": 9249,
+                "Town": "Frieschepalen",
+                "Route": 802
+        },
+        {
+                "Postcode": 9251,
+                "Town": "Burgum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9254,
+                "Town": "Hurdegaryp",
+                "Route": 802
+        },
+        {
+                "Postcode": 9255,
+                "Town": "Tytsjerk",
+                "Route": 802
+        },
+        {
+                "Postcode": 9256,
+                "Town": "Ryptsjerk",
+                "Route": 802
+        },
+        {
+                "Postcode": 9257,
+                "Town": "Noardburgum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9258,
+                "Town": "Jistrum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9261,
+                "Town": "Eastermar",
+                "Route": 802
+        },
+        {
+                "Postcode": 9262,
+                "Town": "Sumar",
+                "Route": 802
+        },
+        {
+                "Postcode": 9263,
+                "Town": "Garyp",
+                "Route": 802
+        },
+        {
+                "Postcode": 9264,
+                "Town": "Earnewald",
+                "Route": 802
+        },
+        {
+                "Postcode": 9265,
+                "Town": "Suwald",
+                "Route": 802
+        },
+        {
+                "Postcode": 9269,
+                "Town": "Feanwalden",
+                "Route": 802
+        },
+        {
+                "Postcode": 9271,
+                "Town": "De Westereen",
+                "Route": 802
+        },
+        {
+                "Postcode": 9281,
+                "Town": "Harkema",
+                "Route": 802
+        },
+        {
+                "Postcode": 9283,
+                "Town": "Surhuizum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9284,
+                "Town": "Augustinusga",
+                "Route": 802
+        },
+        {
+                "Postcode": 9285,
+                "Town": "Buitenpost",
+                "Route": 802
+        },
+        {
+                "Postcode": 9286,
+                "Town": "Twijzel",
+                "Route": 802
+        },
+        {
+                "Postcode": 9287,
+                "Town": "Twijzelheide",
+                "Route": 802
+        },
+        {
+                "Postcode": 9288,
+                "Town": "Kootstertille",
+                "Route": 802
+        },
+        {
+                "Postcode": 9289,
+                "Town": "Drogeham",
+                "Route": 802
+        },
+        {
+                "Postcode": 9291,
+                "Town": "Kollum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9292,
+                "Town": "Augsbuert-Lytsewald",
+                "Route": 802
+        },
+        {
+                "Postcode": 9293,
+                "Town": "Kollumerpomp",
+                "Route": 802
+        },
+        {
+                "Postcode": 9294,
+                "Town": "Aldwald",
+                "Route": 802
+        },
+        {
+                "Postcode": 9295,
+                "Town": "Westergeast",
+                "Route": 802
+        },
+        {
+                "Postcode": 9296,
+                "Town": "De Trieme",
+                "Route": 802
+        },
+        {
+                "Postcode": 9297,
+                "Town": "Feankealster",
+                "Route": 802
+        },
+        {
+                "Postcode": 9298,
+                "Town": "Kollumersweach",
+                "Route": 802
+        },
+        {
+                "Postcode": 9299,
+                "Town": "Sweagerbosk",
+                "Route": 802
+        },
+        {
+                "Postcode": 9301,
+                "Town": "Roden",
+                "Route": 803
+        },
+        {
+                "Postcode": 9302,
+                "Town": "Roden",
+                "Route": 803
+        },
+        {
+                "Postcode": 9304,
+                "Town": "Lieveren",
+                "Route": 803
+        },
+        {
+                "Postcode": 9305,
+                "Town": "Rodersch",
+                "Route": 803
+        },
+        {
+                "Postcode": 9306,
+                "Town": "Alteveer Gem Noordenveld",
+                "Route": 803
+        },
+        {
+                "Postcode": 9307,
+                "Town": "Steenbergen Dr",
+                "Route": 803
+        },
+        {
+                "Postcode": 9311,
+                "Town": "Nieuw-Roden",
+                "Route": 803
+        },
+        {
+                "Postcode": 9312,
+                "Town": "Nietap",
+                "Route": 803
+        },
+        {
+                "Postcode": 9313,
+                "Town": "Leutingewolde",
+                "Route": 803
+        },
+        {
+                "Postcode": 9314,
+                "Town": "Foxwolde",
+                "Route": 803
+        },
+        {
+                "Postcode": 9315,
+                "Town": "Roderwolde",
+                "Route": 803
+        },
+        {
+                "Postcode": 9321,
+                "Town": "Peize",
+                "Route": 803
+        },
+        {
+                "Postcode": 9331,
+                "Town": "Norg",
+                "Route": 803
+        },
+        {
+                "Postcode": 9333,
+                "Town": "Langelo Dr",
+                "Route": 803
+        },
+        {
+                "Postcode": 9334,
+                "Town": "Peest",
+                "Route": 803
+        },
+        {
+                "Postcode": 9335,
+                "Town": "Zuidvelde",
+                "Route": 803
+        },
+        {
+                "Postcode": 9336,
+                "Town": "Huis Ter Heide Dr",
+                "Route": 803
+        },
+        {
+                "Postcode": 9337,
+                "Town": "Westervelde",
+                "Route": 803
+        },
+        {
+                "Postcode": 9341,
+                "Town": "Veenhuizen",
+                "Route": 803
+        },
+        {
+                "Postcode": 9342,
+                "Town": "Een",
+                "Route": 803
+        },
+        {
+                "Postcode": 9343,
+                "Town": "Een-West",
+                "Route": 803
+        },
+        {
+                "Postcode": 9351,
+                "Town": "Leek",
+                "Route": 803
+        },
+        {
+                "Postcode": 9354,
+                "Town": "Zevenhuizen Gn",
+                "Route": 803
+        },
+        {
+                "Postcode": 9355,
+                "Town": "Mildwolde",
+                "Route": 803
+        },
+        {
+                "Postcode": 9356,
+                "Town": "Tolbert",
+                "Route": 803
+        },
+        {
+                "Postcode": 9361,
+                "Town": "Boerakker",
+                "Route": 803
+        },
+        {
+                "Postcode": 9362,
+                "Town": "Boerakker",
+                "Route": 803
+        },
+        {
+                "Postcode": 9363,
+                "Town": "Marum",
+                "Route": 803
+        },
+        {
+                "Postcode": 9364,
+                "Town": "Nuis",
+                "Route": 803
+        },
+        {
+                "Postcode": 9365,
+                "Town": "Niebert",
+                "Route": 803
+        },
+        {
+                "Postcode": 9366,
+                "Town": "Jonkersvaart",
+                "Route": 803
+        },
+        {
+                "Postcode": 9367,
+                "Town": "De Wilp",
+                "Route": 803
+        },
+        {
+                "Postcode": 9401,
+                "Town": "Assen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9403,
+                "Town": "Assen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9404,
+                "Town": "Assen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9405,
+                "Town": "Assen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9406,
+                "Town": "Drachten",
+                "Route": 804
+        },
+        {
+                "Postcode": 9407,
+                "Town": "Assen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9409,
+                "Town": "Loon",
+                "Route": 804
+        },
+        {
+                "Postcode": 9411,
+                "Town": "Beilen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9412,
+                "Town": "Beilen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9413,
+                "Town": "Beilen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9414,
+                "Town": "Hooghalen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9415,
+                "Town": "Hijken",
+                "Route": 804
+        },
+        {
+                "Postcode": 9416,
+                "Town": "Oranje",
+                "Route": 804
+        },
+        {
+                "Postcode": 9417,
+                "Town": "Spier",
+                "Route": 804
+        },
+        {
+                "Postcode": 9418,
+                "Town": "Wijster",
+                "Route": 804
+        },
+        {
+                "Postcode": 9419,
+                "Town": "Drijber",
+                "Route": 804
+        },
+        {
+                "Postcode": 9421,
+                "Town": "Bovensmilde",
+                "Route": 804
+        },
+        {
+                "Postcode": 9422,
+                "Town": "Smilde",
+                "Route": 804
+        },
+        {
+                "Postcode": 9423,
+                "Town": "Hoogersmilde",
+                "Route": 804
+        },
+        {
+                "Postcode": 9431,
+                "Town": "Westerbork",
+                "Route": 804
+        },
+        {
+                "Postcode": 9432,
+                "Town": "Zuidveld",
+                "Route": 804
+        },
+        {
+                "Postcode": 9433,
+                "Town": "Zwiggelte",
+                "Route": 804
+        },
+        {
+                "Postcode": 9434,
+                "Town": "Eursinge",
+                "Route": 804
+        },
+        {
+                "Postcode": 9435,
+                "Town": "Bruntinge",
+                "Route": 804
+        },
+        {
+                "Postcode": 9436,
+                "Town": "Mantinge",
+                "Route": 804
+        },
+        {
+                "Postcode": 9437,
+                "Town": "Balinge",
+                "Route": 804
+        },
+        {
+                "Postcode": 9438,
+                "Town": "Garminge",
+                "Route": 804
+        },
+        {
+                "Postcode": 9439,
+                "Town": "Witteveen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9441,
+                "Town": "Orvelte",
+                "Route": 804
+        },
+        {
+                "Postcode": 9442,
+                "Town": "Elp",
+                "Route": 804
+        },
+        {
+                "Postcode": 9443,
+                "Town": "Schoonloo",
+                "Route": 804
+        },
+        {
+                "Postcode": 9444,
+                "Town": "Grolloo",
+                "Route": 804
+        },
+        {
+                "Postcode": 9445,
+                "Town": "Vredenheim",
+                "Route": 804
+        },
+        {
+                "Postcode": 9446,
+                "Town": "Amen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9447,
+                "Town": "Papenvoort",
+                "Route": 804
+        },
+        {
+                "Postcode": 9448,
+                "Town": "Marwijksoord",
+                "Route": 804
+        },
+        {
+                "Postcode": 9449,
+                "Town": "Nooitgedacht",
+                "Route": 804
+        },
+        {
+                "Postcode": 9451,
+                "Town": "Rolde",
+                "Route": 804
+        },
+        {
+                "Postcode": 9452,
+                "Town": "Nijlande",
+                "Route": 804
+        },
+        {
+                "Postcode": 9453,
+                "Town": "Eldersloo",
+                "Route": 804
+        },
+        {
+                "Postcode": 9454,
+                "Town": "Ekehaar",
+                "Route": 804
+        },
+        {
+                "Postcode": 9456,
+                "Town": "Eleveld",
+                "Route": 804
+        },
+        {
+                "Postcode": 9457,
+                "Town": "Deurze",
+                "Route": 804
+        },
+        {
+                "Postcode": 9458,
+                "Town": "Balloo",
+                "Route": 804
+        },
+        {
+                "Postcode": 9459,
+                "Town": "Balloerveld",
+                "Route": 804
+        },
+        {
+                "Postcode": 9461,
+                "Town": "Gieten",
+                "Route": 804
+        },
+        {
+                "Postcode": 9462,
+                "Town": "Gasselte",
+                "Route": 804
+        },
+        {
+                "Postcode": 9463,
+                "Town": "Eext",
+                "Route": 804
+        },
+        {
+                "Postcode": 9464,
+                "Town": "Eexterzandvoort",
+                "Route": 805
+        },
+        {
+                "Postcode": 9465,
+                "Town": "Anderen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9466,
+                "Town": "Gasteren",
+                "Route": 804
+        },
+        {
+                "Postcode": 9467,
+                "Town": "Anloo",
+                "Route": 804
+        },
+        {
+                "Postcode": 9468,
+                "Town": "Annen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9469,
+                "Town": "Schipborg",
+                "Route": 804
+        },
+        {
+                "Postcode": 9471,
+                "Town": "Zuidiaren",
+                "Route": 803
+        },
+        {
+                "Postcode": 9472,
+                "Town": "Zuidiaren",
+                "Route": 803
+        },
+        {
+                "Postcode": 9473,
+                "Town": "De Groeve",
+                "Route": 803
+        },
+        {
+                "Postcode": 9474,
+                "Town": "Zuidlaarderveen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9475,
+                "Town": "Midlaren",
+                "Route": 803
+        },
+        {
+                "Postcode": 9479,
+                "Town": "Noordlaren",
+                "Route": 803
+        },
+        {
+                "Postcode": 9481,
+                "Town": "Vries",
+                "Route": 803
+        },
+        {
+                "Postcode": 9482,
+                "Town": "Tynaarlo",
+                "Route": 803
+        },
+        {
+                "Postcode": 9483,
+                "Town": "Zeegse",
+                "Route": 804
+        },
+        {
+                "Postcode": 9484,
+                "Town": "Oudemolen Dr",
+                "Route": 804
+        },
+        {
+                "Postcode": 9485,
+                "Town": "Taarlo",
+                "Route": 804
+        },
+        {
+                "Postcode": 9486,
+                "Town": "Rhee",
+                "Route": 804
+        },
+        {
+                "Postcode": 9487,
+                "Town": "Ter Aard",
+                "Route": 804
+        },
+        {
+                "Postcode": 9488,
+                "Town": "Zeijerveld",
+                "Route": 804
+        },
+        {
+                "Postcode": 9489,
+                "Town": "Zeijerveen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9491,
+                "Town": "Zeijen",
+                "Route": 804
+        },
+        {
+                "Postcode": 9492,
+                "Town": "Ubbena",
+                "Route": 804
+        },
+        {
+                "Postcode": 9493,
+                "Town": "De Punt",
+                "Route": 803
+        },
+        {
+                "Postcode": 9494,
+                "Town": "Yde",
+                "Route": 803
+        },
+        {
+                "Postcode": 9495,
+                "Town": "Winde",
+                "Route": 803
+        },
+        {
+                "Postcode": 9496,
+                "Town": "Bunne",
+                "Route": 803
+        },
+        {
+                "Postcode": 9497,
+                "Town": "Donderen",
+                "Route": 803
+        },
+        {
+                "Postcode": 9501,
+                "Town": "Stadskanaal",
+                "Route": 805
+        },
+        {
+                "Postcode": 9502,
+                "Town": "Stadskanaal",
+                "Route": 805
+        },
+        {
+                "Postcode": 9503,
+                "Town": "Stadskanaal",
+                "Route": 805
+        },
+        {
+                "Postcode": 9511,
+                "Town": "Gieterveen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9512,
+                "Town": "Nieuwediep",
+                "Route": 805
+        },
+        {
+                "Postcode": 9514,
+                "Town": "Gasselternijveen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9515,
+                "Town": "Gasselternijveenschemond",
+                "Route": 805
+        },
+        {
+                "Postcode": 9521,
+                "Town": "Nieuw-Buinen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9523,
+                "Town": "Drouwenermond",
+                "Route": 805
+        },
+        {
+                "Postcode": 9524,
+                "Town": "Buinerveen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9525,
+                "Town": "Drouwenerveen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9526,
+                "Town": "Bronnegerveen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9527,
+                "Town": "Bronneger",
+                "Route": 805
+        },
+        {
+                "Postcode": 9528,
+                "Town": "Buinen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9531,
+                "Town": "Borger",
+                "Route": 805
+        },
+        {
+                "Postcode": 9533,
+                "Town": "Drouwen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9534,
+                "Town": "Westdorp",
+                "Route": 804
+        },
+        {
+                "Postcode": 9535,
+                "Town": "Ellertshaar",
+                "Route": 804
+        },
+        {
+                "Postcode": 9536,
+                "Town": "Ees",
+                "Route": 805
+        },
+        {
+                "Postcode": 9537,
+                "Town": "Eesergroen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9541,
+                "Town": "Vlagtwedde",
+                "Route": 805
+        },
+        {
+                "Postcode": 9545,
+                "Town": "Bourtange",
+                "Route": 805
+        },
+        {
+                "Postcode": 9551,
+                "Town": "Sellingen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9561,
+                "Town": "Ter Apel",
+                "Route": 805
+        },
+        {
+                "Postcode": 9563,
+                "Town": "Ter Apelkanaal",
+                "Route": 805
+        },
+        {
+                "Postcode": 9564,
+                "Town": "Zandberg Dr",
+                "Route": 805
+        },
+        {
+                "Postcode": 9566,
+                "Town": "Veelerveen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9571,
+                "Town": "2e Exloermond",
+                "Route": 805
+        },
+        {
+                "Postcode": 9573,
+                "Town": "1e Exloermond",
+                "Route": 805
+        },
+        {
+                "Postcode": 9574,
+                "Town": "Exloerveen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9581,
+                "Town": "Musselkanaal",
+                "Route": 805
+        },
+        {
+                "Postcode": 9584,
+                "Town": "Mussel",
+                "Route": 805
+        },
+        {
+                "Postcode": 9585,
+                "Town": "Vledderveen Gn",
+                "Route": 805
+        },
+        {
+                "Postcode": 9591,
+                "Town": "Onstwedde",
+                "Route": 805
+        },
+        {
+                "Postcode": 9601,
+                "Town": "Hoogezand",
+                "Route": 806
+        },
+        {
+                "Postcode": 9603,
+                "Town": "Hoogezand",
+                "Route": 806
+        },
+        {
+                "Postcode": 9605,
+                "Town": "Kiel-Windeweer",
+                "Route": 806
+        },
+        {
+                "Postcode": 9606,
+                "Town": "Kropswolde",
+                "Route": 806
+        },
+        {
+                "Postcode": 9607,
+                "Town": "Foxhol",
+                "Route": 806
+        },
+        {
+                "Postcode": 9608,
+                "Town": "Westerbroek",
+                "Route": 806
+        },
+        {
+                "Postcode": 9609,
+                "Town": "Waterhuizen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9611,
+                "Town": "Sappemeer",
+                "Route": 806
+        },
+        {
+                "Postcode": 9612,
+                "Town": "Hoogezand",
+                "Route": 806
+        },
+        {
+                "Postcode": 9613,
+                "Town": "Meerstadt",
+                "Route": 807
+        },
+        {
+                "Postcode": 9614,
+                "Town": "Harkstede Gn",
+                "Route": 806
+        },
+        {
+                "Postcode": 9615,
+                "Town": "Kolham",
+                "Route": 806
+        },
+        {
+                "Postcode": 9616,
+                "Town": "Scharmer",
+                "Route": 806
+        },
+        {
+                "Postcode": 9617,
+                "Town": "Harkstede",
+                "Route": 806
+        },
+        {
+                "Postcode": 9618,
+                "Town": "Woudbloem",
+                "Route": 806
+        },
+        {
+                "Postcode": 9619,
+                "Town": "Froombosch",
+                "Route": 806
+        },
+        {
+                "Postcode": 9621,
+                "Town": "Slochteren",
+                "Route": 806
+        },
+        {
+                "Postcode": 9622,
+                "Town": "Lageland Gn",
+                "Route": 806
+        },
+        {
+                "Postcode": 9623,
+                "Town": "Lageland",
+                "Route": 806
+        },
+        {
+                "Postcode": 9624,
+                "Town": "Luddeweer",
+                "Route": 806
+        },
+        {
+                "Postcode": 9625,
+                "Town": "Overschild",
+                "Route": 806
+        },
+        {
+                "Postcode": 9626,
+                "Town": "Schildwolde",
+                "Route": 806
+        },
+        {
+                "Postcode": 9627,
+                "Town": "Hellum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9628,
+                "Town": "Siddeburen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9629,
+                "Town": "Steendam",
+                "Route": 806
+        },
+        {
+                "Postcode": 9631,
+                "Town": "Borgercompagnie",
+                "Route": 805
+        },
+        {
+                "Postcode": 9632,
+                "Town": "Borgercompagnie",
+                "Route": 805
+        },
+        {
+                "Postcode": 9633,
+                "Town": "Tripscompagnie",
+                "Route": 805
+        },
+        {
+                "Postcode": 9635,
+                "Town": "Noordbroek",
+                "Route": 806
+        },
+        {
+                "Postcode": 9636,
+                "Town": "Zuidbroek",
+                "Route": 806
+        },
+        {
+                "Postcode": 9641,
+                "Town": "Veendam",
+                "Route": 805
+        },
+        {
+                "Postcode": 9642,
+                "Town": "Veendam",
+                "Route": 805
+        },
+        {
+                "Postcode": 9644,
+                "Town": "Veendam",
+                "Route": 805
+        },
+        {
+                "Postcode": 9645,
+                "Town": "Veendam",
+                "Route": 805
+        },
+        {
+                "Postcode": 9646,
+                "Town": "Veendam",
+                "Route": 805
+        },
+        {
+                "Postcode": 9648,
+                "Town": "Wildervank",
+                "Route": 805
+        },
+        {
+                "Postcode": 9649,
+                "Town": "Muntendam",
+                "Route": 805
+        },
+        {
+                "Postcode": 9651,
+                "Town": "Meeden",
+                "Route": 805
+        },
+        {
+                "Postcode": 9654,
+                "Town": "Annerveenschekanaal",
+                "Route": 805
+        },
+        {
+                "Postcode": 9655,
+                "Town": "Oud Annerveen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9656,
+                "Town": "Spijkerboor Dr",
+                "Route": 805
+        },
+        {
+                "Postcode": 9657,
+                "Town": "Nieuw Annerveen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9658,
+                "Town": "Eexterveen",
+                "Route": 805
+        },
+        {
+                "Postcode": 9659,
+                "Town": "Eexterveenschekanaal",
+                "Route": 805
+        },
+        {
+                "Postcode": 9661,
+                "Town": "Alteveer Gr",
+                "Route": 805
+        },
+        {
+                "Postcode": 9663,
+                "Town": "Nieuwe Pekela",
+                "Route": 805
+        },
+        {
+                "Postcode": 9665,
+                "Town": "Oude Pekela",
+                "Route": 805
+        },
+        {
+                "Postcode": 9671,
+                "Town": "Windschoten",
+                "Route": 805
+        },
+        {
+                "Postcode": 9672,
+                "Town": "Windschoten",
+                "Route": 805
+        },
+        {
+                "Postcode": 9673,
+                "Town": "Windschoten",
+                "Route": 805
+        },
+        {
+                "Postcode": 9674,
+                "Town": "Windschoten",
+                "Route": 805
+        },
+        {
+                "Postcode": 9675,
+                "Town": "Windschoten",
+                "Route": 805
+        },
+        {
+                "Postcode": 9677,
+                "Town": "Helligerlee",
+                "Route": 805
+        },
+        {
+                "Postcode": 9678,
+                "Town": "Westerlee Gn",
+                "Route": 805
+        },
+        {
+                "Postcode": 9679,
+                "Town": "Scheemda",
+                "Route": 805
+        },
+        {
+                "Postcode": 9681,
+                "Town": "Midwolde",
+                "Route": 806
+        },
+        {
+                "Postcode": 9682,
+                "Town": "Oostwold Gem Old",
+                "Route": 806
+        },
+        {
+                "Postcode": 9684,
+                "Town": "Finsterwolde",
+                "Route": 806
+        },
+        {
+                "Postcode": 9685,
+                "Town": "Blauwestad",
+                "Route": 805
+        },
+        {
+                "Postcode": 9686,
+                "Town": "Beerta",
+                "Route": 806
+        },
+        {
+                "Postcode": 9687,
+                "Town": "Nieuw Beerta",
+                "Route": 806
+        },
+        {
+                "Postcode": 9688,
+                "Town": "Drieborg",
+                "Route": 806
+        },
+        {
+                "Postcode": 9691,
+                "Town": "Oudezijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9693,
+                "Town": "Bad Nieuweschans",
+                "Route": 806
+        },
+        {
+                "Postcode": 9695,
+                "Town": "Bellinwolde",
+                "Route": 805
+        },
+        {
+                "Postcode": 9696,
+                "Town": "Oudeschans",
+                "Route": 806
+        },
+        {
+                "Postcode": 9697,
+                "Town": "Blijham",
+                "Route": 805
+        },
+        {
+                "Postcode": 9698,
+                "Town": "Wedde",
+                "Route": 805
+        },
+        {
+                "Postcode": 9699,
+                "Town": "Vriescheloo",
+                "Route": 805
+        },
+        {
+                "Postcode": 9711,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9712,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9713,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9714,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9716,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9718,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9723,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9726,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9727,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9728,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9731,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9735,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9736,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9738,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9742,
+                "Town": "Groningen",
+                "Route": 807
+        },
+        {
+                "Postcode": 9743,
+                "Town": "Groningen",
+                "Route": 803
+        },
+        {
+                "Postcode": 9747,
+                "Town": "Groningen",
+                "Route": 803
+        },
+        {
+                "Postcode": 9749,
+                "Town": "Matsloot",
+                "Route": 803
+        },
+        {
+                "Postcode": 9751,
+                "Town": "Haren Gn",
+                "Route": 803
+        },
+        {
+                "Postcode": 9752,
+                "Town": "Haren Gn",
+                "Route": 803
+        },
+        {
+                "Postcode": 9753,
+                "Town": "Haren Gn",
+                "Route": 803
+        },
+        {
+                "Postcode": 9755,
+                "Town": "Onnen",
+                "Route": 803
+        },
+        {
+                "Postcode": 9756,
+                "Town": "Glimmen",
+                "Route": 803
+        },
+        {
+                "Postcode": 9761,
+                "Town": "Eelde",
+                "Route": 803
+        },
+        {
+                "Postcode": 9765,
+                "Town": "Paterswolde",
+                "Route": 803
+        },
+        {
+                "Postcode": 9766,
+                "Town": "Eelderwolde",
+                "Route": 803
+        },
+        {
+                "Postcode": 9771,
+                "Town": "Sauwerd",
+                "Route": 806
+        },
+        {
+                "Postcode": 9773,
+                "Town": "Westinge",
+                "Route": 806
+        },
+        {
+                "Postcode": 9774,
+                "Town": "Adorp",
+                "Route": 806
+        },
+        {
+                "Postcode": 9781,
+                "Town": "Bedum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9784,
+                "Town": "Noordwolde Gn",
+                "Route": 806
+        },
+        {
+                "Postcode": 9785,
+                "Town": "Zuidwolde Gn",
+                "Route": 806
+        },
+        {
+                "Postcode": 9791,
+                "Town": "Ten Boer",
+                "Route": 806
+        },
+        {
+                "Postcode": 9792,
+                "Town": "Ten Post",
+                "Route": 806
+        },
+        {
+                "Postcode": 9793,
+                "Town": "Winneweer",
+                "Route": 806
+        },
+        {
+                "Postcode": 9794,
+                "Town": "Lellens",
+                "Route": 806
+        },
+        {
+                "Postcode": 9795,
+                "Town": "Woltersum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9796,
+                "Town": "Sint Annen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9797,
+                "Town": "Thesinge",
+                "Route": 806
+        },
+        {
+                "Postcode": 9798,
+                "Town": "Garmerwolde",
+                "Route": 806
+        },
+        {
+                "Postcode": 9801,
+                "Town": "Zuidhorn",
+                "Route": 803
+        },
+        {
+                "Postcode": 9804,
+                "Town": "Noordhorn",
+                "Route": 803
+        },
+        {
+                "Postcode": 9805,
+                "Town": "Briltil",
+                "Route": 803
+        },
+        {
+                "Postcode": 9811,
+                "Town": "Enumatil",
+                "Route": 803
+        },
+        {
+                "Postcode": 9812,
+                "Town": "Enumatil",
+                "Route": 803
+        },
+        {
+                "Postcode": 9821,
+                "Town": "Oldekerk",
+                "Route": 803
+        },
+        {
+                "Postcode": 9822,
+                "Town": "Niekerk Westerkwartier",
+                "Route": 803
+        },
+        {
+                "Postcode": 9824,
+                "Town": "Noordwijk Gn",
+                "Route": 803
+        },
+        {
+                "Postcode": 9825,
+                "Town": "Lucaswolde",
+                "Route": 803
+        },
+        {
+                "Postcode": 9827,
+                "Town": "Lettelbert",
+                "Route": 803
+        },
+        {
+                "Postcode": 9828,
+                "Town": "Ooostwold Westerkwartier",
+                "Route": 803
+        },
+        {
+                "Postcode": 9831,
+                "Town": "Aduard",
+                "Route": 803
+        },
+        {
+                "Postcode": 9832,
+                "Town": "Den Horn",
+                "Route": 803
+        },
+        {
+                "Postcode": 9833,
+                "Town": "Den Ham Gn",
+                "Route": 803
+        },
+        {
+                "Postcode": 9841,
+                "Town": "Niezijl",
+                "Route": 803
+        },
+        {
+                "Postcode": 9842,
+                "Town": "Niezijl",
+                "Route": 803
+        },
+        {
+                "Postcode": 9843,
+                "Town": "Grijpskerk",
+                "Route": 803
+        },
+        {
+                "Postcode": 9844,
+                "Town": "Pieterzijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9845,
+                "Town": "Visvliet",
+                "Route": 803
+        },
+        {
+                "Postcode": 9851,
+                "Town": "Burum",
+                "Route": 802
+        },
+        {
+                "Postcode": 9852,
+                "Town": "Warfstermolen",
+                "Route": 802
+        },
+        {
+                "Postcode": 9853,
+                "Town": "Munnekezijl",
+                "Route": 802
+        },
+        {
+                "Postcode": 9861,
+                "Town": "Grootegast",
+                "Route": 803
+        },
+        {
+                "Postcode": 9862,
+                "Town": "Sebaldeburen",
+                "Route": 803
+        },
+        {
+                "Postcode": 9863,
+                "Town": "Doezum",
+                "Route": 803
+        },
+        {
+                "Postcode": 9864,
+                "Town": "Kornhorn",
+                "Route": 803
+        },
+        {
+                "Postcode": 9865,
+                "Town": "Opende",
+                "Route": 803
+        },
+        {
+                "Postcode": 9866,
+                "Town": "Lutjegast",
+                "Route": 803
+        },
+        {
+                "Postcode": 9871,
+                "Town": "Stroobos",
+                "Route": 803
+        },
+        {
+                "Postcode": 9872,
+                "Town": "Stroobos",
+                "Route": 803
+        },
+        {
+                "Postcode": 9873,
+                "Town": "Grekesklooster",
+                "Route": 803
+        },
+        {
+                "Postcode": 9881,
+                "Town": "Kommerzijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9882,
+                "Town": "Kommerzijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9883,
+                "Town": "Oldehove",
+                "Route": 806
+        },
+        {
+                "Postcode": 9884,
+                "Town": "Niehove",
+                "Route": 806
+        },
+        {
+                "Postcode": 9885,
+                "Town": "Lauerzijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9886,
+                "Town": "Saaksum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9891,
+                "Town": "Ezinge",
+                "Route": 806
+        },
+        {
+                "Postcode": 9892,
+                "Town": "Feerwerd",
+                "Route": 806
+        },
+        {
+                "Postcode": 9893,
+                "Town": "Garnwerd",
+                "Route": 806
+        },
+        {
+                "Postcode": 9901,
+                "Town": "Appingedam",
+                "Route": 806
+        },
+        {
+                "Postcode": 9902,
+                "Town": "Appingedam",
+                "Route": 806
+        },
+        {
+                "Postcode": 9903,
+                "Town": "Appingedam",
+                "Route": 806
+        },
+        {
+                "Postcode": 9904,
+                "Town": "Krewerd",
+                "Route": 806
+        },
+        {
+                "Postcode": 9905,
+                "Town": "Holwierde",
+                "Route": 806
+        },
+        {
+                "Postcode": 9906,
+                "Town": "Bierum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9907,
+                "Town": "Losdorp",
+                "Route": 806
+        },
+        {
+                "Postcode": 9908,
+                "Town": "Godlinze",
+                "Route": 806
+        },
+        {
+                "Postcode": 9909,
+                "Town": "Spijk Gn",
+                "Route": 806
+        },
+        {
+                "Postcode": 9911,
+                "Town": "Oosterwijtwerd",
+                "Route": 806
+        },
+        {
+                "Postcode": 9912,
+                "Town": "Leermens",
+                "Route": 806
+        },
+        {
+                "Postcode": 9913,
+                "Town": "Eenum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9914,
+                "Town": "Zeerijp",
+                "Route": 806
+        },
+        {
+                "Postcode": 9915,
+                "Town": "t Zandt Gn",
+                "Route": 806
+        },
+        {
+                "Postcode": 9917,
+                "Town": "Wirdum Gn",
+                "Route": 806
+        },
+        {
+                "Postcode": 9918,
+                "Town": "Garrelsweer",
+                "Route": 806
+        },
+        {
+                "Postcode": 9919,
+                "Town": "Loppersum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9921,
+                "Town": "Stedum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9922,
+                "Town": "Westeremden",
+                "Route": 806
+        },
+        {
+                "Postcode": 9923,
+                "Town": "Garsthuizen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9925,
+                "Town": "Startenhuizen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9931,
+                "Town": "Delfzijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9932,
+                "Town": "Delfzijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9933,
+                "Town": "Delfzijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9934,
+                "Town": "Delfzijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9936,
+                "Town": "Farmsum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9937,
+                "Town": "Meedhuizen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9939,
+                "Town": "Tjuchem",
+                "Route": 806
+        },
+        {
+                "Postcode": 9942,
+                "Town": "T Waar",
+                "Route": 806
+        },
+        {
+                "Postcode": 9943,
+                "Town": "Nieuw Scheemda",
+                "Route": 806
+        },
+        {
+                "Postcode": 9944,
+                "Town": "Nieuwolda",
+                "Route": 806
+        },
+        {
+                "Postcode": 9945,
+                "Town": "Wagenborgen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9946,
+                "Town": "Woldendorp",
+                "Route": 806
+        },
+        {
+                "Postcode": 9947,
+                "Town": "Telmunten",
+                "Route": 806
+        },
+        {
+                "Postcode": 9948,
+                "Town": "Telmunterzijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9949,
+                "Town": "Borgsweer",
+                "Route": 806
+        },
+        {
+                "Postcode": 9951,
+                "Town": "Winsum Gn",
+                "Route": 806
+        },
+        {
+                "Postcode": 9953,
+                "Town": "Baflo",
+                "Route": 806
+        },
+        {
+                "Postcode": 9954,
+                "Town": "Tinallinge",
+                "Route": 806
+        },
+        {
+                "Postcode": 9955,
+                "Town": "Rasquert",
+                "Route": 806
+        },
+        {
+                "Postcode": 9956,
+                "Town": "Den Andel",
+                "Route": 806
+        },
+        {
+                "Postcode": 9957,
+                "Town": "Saaxumhuizen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9959,
+                "Town": "Onderdendam",
+                "Route": 806
+        },
+        {
+                "Postcode": 9961,
+                "Town": "Mensingeweer",
+                "Route": 806
+        },
+        {
+                "Postcode": 9962,
+                "Town": "Schouwerzijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9963,
+                "Town": "Warfhuizen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9964,
+                "Town": "Wehe-Den Hoorn",
+                "Route": 806
+        },
+        {
+                "Postcode": 9965,
+                "Town": "Leens",
+                "Route": 806
+        },
+        {
+                "Postcode": 9966,
+                "Town": "Zuurdijk",
+                "Route": 806
+        },
+        {
+                "Postcode": 9967,
+                "Town": "Eenrum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9968,
+                "Town": "Pieterburen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9969,
+                "Town": "Westernieland",
+                "Route": 806
+        },
+        {
+                "Postcode": 9971,
+                "Town": "Ulrum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9972,
+                "Town": "Niekerk Het Hogeland",
+                "Route": 806
+        },
+        {
+                "Postcode": 9973,
+                "Town": "Houwerzijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9974,
+                "Town": "Zoutkamp",
+                "Route": 806
+        },
+        {
+                "Postcode": 9975,
+                "Town": "Vlierhuizen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9976,
+                "Town": "Lauwersoog",
+                "Route": 806
+        },
+        {
+                "Postcode": 9977,
+                "Town": "Kloosterburen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9978,
+                "Town": "Hornhuizen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9979,
+                "Town": "Eemshaven",
+                "Route": 806
+        },
+        {
+                "Postcode": 9981,
+                "Town": "Uithuizen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9982,
+                "Town": "Uithuizermeeden",
+                "Route": 806
+        },
+        {
+                "Postcode": 9983,
+                "Town": "Roodeschool",
+                "Route": 806
+        },
+        {
+                "Postcode": 9984,
+                "Town": "Oudeschip",
+                "Route": 806
+        },
+        {
+                "Postcode": 9985,
+                "Town": "Oosternieland",
+                "Route": 806
+        },
+        {
+                "Postcode": 9986,
+                "Town": "Oldenzijl",
+                "Route": 806
+        },
+        {
+                "Postcode": 9987,
+                "Town": "Zijdijk",
+                "Route": 806
+        },
+        {
+                "Postcode": 9988,
+                "Town": "Usquert",
+                "Route": 806
+        },
+        {
+                "Postcode": 9989,
+                "Town": "Warffum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9991,
+                "Town": "Middelstum",
+                "Route": 806
+        },
+        {
+                "Postcode": 9992,
+                "Town": "Huizinge",
+                "Route": 806
+        },
+        {
+                "Postcode": 9993,
+                "Town": "Westerwijtwerd",
+                "Route": 806
+        },
+        {
+                "Postcode": 9994,
+                "Town": "Toornwerd",
+                "Route": 806
+        },
+        {
+                "Postcode": 9995,
+                "Town": "Kantens",
+                "Route": 806
+        },
+        {
+                "Postcode": 9996,
+                "Town": "Eppenhuizen",
+                "Route": 806
+        },
+        {
+                "Postcode": 9997,
+                "Town": "Zandeweer",
+                "Route": 806
+        },
+        {
+                "Postcode": 9998,
+                "Town": "Rottum Gn",
+                "Route": 806
+        },
+        {
+                "Postcode": 9999,
+                "Town": "Stitswerd",
+                "Route": 806
+        },
+            // ... (other entries)
+        ];
+
+        function performLookup() {
+            const query = postcodeInput.value.trim();
+            const matchingEntry = entries.find(entry =>
+                entry.Postcode === parseInt(query)
+            );
+
+            if (matchingEntry) {
+                townResult.textContent = `Town: ${matchingEntry.Town}`;
+                routeResult.textContent = `Route: ${matchingEntry.Route}`;
+            } else {
+                townResult.textContent = "";
+                routeResult.textContent = "";
+            }
+        }
+
+        lookupButton.addEventListener("click", performLookup);
+        postcodeInput.addEventListener("keyup", event => {
+            if (event.key === "Enter") {
+                performLookup();
+            }
+        });
+    </script>
+</body>
+</html>
